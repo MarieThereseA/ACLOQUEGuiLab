@@ -1,17 +1,5 @@
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -22,6 +10,10 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
     private JCheckBox checkBox1;
     private JCheckBox checkBox2;
     private JLabel welcomeLabel;
+    private JTextArea textArea;
+    private JTextField textField;
+    private JMenuItem FAQ;
+    private JMenuItem About;
 
     public SimpleGUI() {
         super("Frame title");
@@ -42,13 +34,17 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         menu1.add(menuItem1);
         menu1.add(menuItem2);
         JMenu menu2 = new JMenu("Help");
+        FAQ = new JMenuItem("FAQ");
+        About = new JMenuItem("About");
+        menu2.add(FAQ);
+        menu2.add(About);
 
         // add "File" and "Help" menus to the MenuBar
         menuBar.add(menu1);
         menuBar.add(menu2);
 
         // create the big text area located in the middle
-        JTextArea textArea = new JTextArea();
+        textArea = new JTextArea();
 
         // create welcome label
         welcomeLabel = new JLabel("Welcome to my GUI!");
@@ -70,7 +66,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
 
         // create the components at the bottom
         JLabel label = new JLabel("Enter Text");
-        JTextField textField = new JTextField(10); // accepts upto 10 characters
+        textField = new JTextField(10); // accepts upto 10 characters
         JButton sendButton = new JButton("Send");
         JButton resetButton = new JButton("Reset");
 
@@ -109,10 +105,13 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         //setting up buttons to use ActionListener interface and actionPerformed method
         sendButton.addActionListener(this);
         resetButton.addActionListener(this);
+        FAQ.addActionListener(this);
+        About.addActionListener(this);
 
         //setting up checkboxes to use ItemListener interface and itemStateChanged method
         checkBox1.addItemListener(this);
         checkBox2.addItemListener(this);
+
 
         // display the frame!
         setVisible(true);
@@ -120,16 +119,35 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
 
     // ActionListener interface method, called when a button is clicked
     public void actionPerformed(ActionEvent ae) {
+        System.out.println("Detected");
         // cast ae to a JButton object since we want to call the getText method on it;
         // casting is needed since getSource() returns Object type, NOT a JButton
         Object source = ae.getSource();
-        JButton button = (JButton) source;
-        String text = button.getText();
+        AbstractButton component;
+        if (source instanceof JButton){
+            component = (JButton) source;
+        }else if (source instanceof JMenuItem){
+            component = (JMenuItem) source;
+        } else {
+            component = new JButton();
+        }
+
+        String text = component.getText();
+        System.out.println(text);
 
         if (text.equals("Send")) {
             welcomeLabel.setText("Send pressed!");
+            textArea.append(textField.getText());
         } else if (text.equals("Reset")) {
             welcomeLabel.setText("Reset pressed!");
+            textArea.setText("");
+            textField.setText("");
+            checkBox1.setSelected(false);
+            checkBox2.setSelected(false);
+        }else if (text.equals("Open")){
+            textField.setText("Open");
+        }else if (text.equals("About")){
+            textField.setText("About");
         }
     }
 
