@@ -1,11 +1,13 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
+public class SimpleGUI extends JFrame implements ActionListener, ItemListener, ChangeListener {
 
     private JCheckBox checkBox1;
     private JCheckBox checkBox2;
@@ -23,7 +25,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
     private void init() {
         // setting up the frame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 400);
+        setSize(600, 600);
         setLocation(300, 50);
 
         // create the MenuBar and menu components
@@ -69,6 +71,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         textField = new JTextField(10); // accepts upto 10 characters
         JButton sendButton = new JButton("Send");
         JButton resetButton = new JButton("Reset");
+        JButton openButton = new JButton("Open");
 
         // create checkboxes
         checkBox1 = new JCheckBox("Yes");
@@ -84,6 +87,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         panel.add(textField);
         panel.add(sendButton);
         panel.add(resetButton);
+        panel.add(openButton);
         panel.add(checkBox1);
         panel.add(checkBox2);
 
@@ -105,8 +109,11 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         //setting up buttons to use ActionListener interface and actionPerformed method
         sendButton.addActionListener(this);
         resetButton.addActionListener(this);
+        openButton.addActionListener(this);
         FAQ.addActionListener(this);
         About.addActionListener(this);
+        menuItem1.addActionListener(this);
+        slider.addChangeListener(this);
 
         //setting up checkboxes to use ItemListener interface and itemStateChanged method
         checkBox1.addItemListener(this);
@@ -138,17 +145,40 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         if (text.equals("Send")) {
             welcomeLabel.setText("Send pressed!");
             textArea.append(textField.getText());
+            textField.setText("");
         } else if (text.equals("Reset")) {
             welcomeLabel.setText("Reset pressed!");
             textArea.setText("");
             textField.setText("");
             checkBox1.setSelected(false);
             checkBox2.setSelected(false);
-        }else if (text.equals("Open")){
+        }else if (text.equals("Open") && component instanceof JMenuItem){
             textField.setText("Open");
         }else if (text.equals("About")){
             textField.setText("About");
+        }else if (text.equals("Open") && component instanceof JButton){
+            JFrame Frame = new JFrame("Open Clicked");
+            Frame.setSize(200, 200);
+            Frame.setLocation(400, 50);
+            JPanel panel = new JPanel();
+            JLabel label = new JLabel("HELLO!!");
+            panel.add(label, BorderLayout.NORTH);
+            Frame.add(panel);
+            Frame.setVisible(true);
         }
+    }
+
+    public void stateChanged(ChangeEvent ce){
+        System.out.println("Slider Detected!");
+        Object source = ce.getSource();
+        JSlider component = new JSlider();
+        if (source instanceof JSlider){
+            component = (JSlider) source;
+            textArea.setText(component.getValue() + "");
+        }else {
+            component = new JSlider();
+        }
+
     }
 
     // ItemListener interface method, called when EITHER check box is toggled!
